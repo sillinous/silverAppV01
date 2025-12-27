@@ -1,0 +1,14 @@
+beautifulsoup4==4.12.3
+fastapi
+uvicorn
+ximilar-client
+requests
+geopy
+openai
+sqlalchemy
+python-dotenv
+alembic
+pytest
+pytest-mock
+httpx
+gunicorn

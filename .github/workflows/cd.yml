@@ -1,0 +1,74 @@
+name: Backend CD - Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  # The image name will be your GitHub username / repo name
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    # Grant permissions for the workflow to write to the container registry
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push backend Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.backend
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:latest
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build and push frontend Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:latest
+          labels: ${{ steps.meta.outputs.labels }}
+
+# --- DEPLOYMENT (EXAMPLE) ---
+# The following job is a commented-out example of how you could deploy.
+# This part is highly specific to your hosting environment and requires secrets.
+#
+#  deploy:
+#    needs: build-and-push
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Deploy to production server
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.PROD_SERVER_HOST }}
+#          username: ${{ secrets.PROD_SERVER_USERNAME }}
+#          key: ${{ secrets.PROD_SERVER_SSH_KEY }}
+#          script: |
+#            cd /path/to/your/project
+#            docker-compose pull
+#            docker-compose up -d --remove-orphans
+#            echo "Deployment successful!"
