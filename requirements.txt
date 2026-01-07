@@ -12,3 +12,7 @@ pytest
 pytest-mock
 httpx
 gunicorn
+python-jose[cryptography]
+passlib[bcrypt]
+pydantic[email]
+python-multipart

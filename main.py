@@ -14,7 +14,7 @@ from arbitrage_os.db import models
 from arbitrage_os.db.database import engine
 
 # API Router imports
-from arbitrage_os.api import admin, discovery, logistics, valuation, verification
+from arbitrage_os.api import admin, auth, discovery, logistics, valuation, verification
 
 def create_db_and_tables():
     models.Base.metadata.create_all(bind=engine)
@@ -42,6 +42,7 @@ def read_root():
     return {"message": "Welcome to Arbitrage OS"}
 
 # Include routers from the api modules
+app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 app.include_router(discovery.router, prefix="/discover", tags=["Discovery"])
 app.include_router(logistics.router, prefix="/logistics", tags=["Logistics"])
