@@ -6,6 +6,7 @@ requests
 geopy
 openai
 sqlalchemy
+psycopg2-binary
 python-dotenv
 alembic
 pytest
@@ -16,3 +17,5 @@ python-jose[cryptography]
 passlib[bcrypt]
 pydantic[email]
 python-multipart
+celery[redis]
+redis

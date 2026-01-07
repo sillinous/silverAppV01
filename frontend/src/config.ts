@@ -6,7 +6,7 @@
 // API URL Configuration
 // In production, set REACT_APP_API_URL environment variable
 // For example: REACT_APP_API_URL=https://api.yourdomain.com
-export const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+export const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8001';
 
 // Other configuration values can be added here as needed
 export const APP_NAME = 'Arbitrage OS';

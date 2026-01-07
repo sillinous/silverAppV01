@@ -7,8 +7,9 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:-user}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
       - POSTGRES_DB=${POSTGRES_DB:-arbitrage_db}
+      - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
-      - "5432:5432"
+      - "5433:5432"  # Using 5433 to avoid conflict with local postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-arbitrage_db}"]
       interval: 5s
@@ -18,7 +19,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "6380:6379"  # Using 6380 to avoid conflict with local redis
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -30,7 +31,7 @@ services:
       context: .
       dockerfile: Dockerfile.backend
     ports:
-      - "8000:8000"
+      - "8001:8000"  # Using 8001 to avoid conflict
     volumes:
       - .:/app # Mount host source code for hot-reloading
     env_file:
@@ -61,7 +62,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:80"
+      - "3001:80"  # Using 3001 to avoid conflict
     depends_on:
       - backend
 

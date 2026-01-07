@@ -4,12 +4,11 @@ FROM node:20-alpine as build
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json
 COPY package.json ./
-COPY package-lock.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install && npm install typescript@4.9.5
 
 # Copy the rest of the application source code
 COPY . .
