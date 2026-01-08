@@ -1,5 +1,6 @@
+import os
 from dotenv import load_dotenv
-load_dotenv() # Load environment variables from .env file
+load_dotenv()
 
 import logging
 from fastapi import FastAPI
@@ -16,6 +17,10 @@ from arbitrage_os.db.database import engine
 # API Router imports
 from arbitrage_os.api import admin, auth, discovery, logistics, valuation, verification
 
+# CORS configuration
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001").split(",")
+logger.info(f"CORS allowed origins: {allowed_origins}")
+
 def create_db_and_tables():
     models.Base.metadata.create_all(bind=engine)
 
@@ -25,17 +30,18 @@ app = FastAPI(
     version="0.1.0"
 )
 
-@app.on_event("startup")
-def on_startup():
-    create_db_and_tables()
-
+# Add CORS middleware BEFORE routes
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Allow frontend origin
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
 
 @app.get("/")
 def read_root():
